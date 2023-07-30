@@ -1,0 +1,246 @@
+rel_type_cd = 'A27'는 자녀에 대한 코드로 숫자로 채워져 있고 a18을 보면  null로 표기
+join할 때 inner join(교집합)과 left outer join을 많이 씀
+
+select * from emp_c; -- 전체 컬럼을 본다.
+select count(*) from emp_c; --1995건
+select distinct gender_cd from emp_c; --1 / 2
+select distinct org_cd from emp_c; --1 / 2
+
+직원연봉정보
+emp_pay_info
+
+select * from fam_c; -- 전체 컬럼을 본다.
+select count(*) from emp_c; --1995건
+select distinct gender_cd from emp_c; --1 / 2
+select distinct org_cd from emp_c; --1 / 2
+
+select distinct child_seq from fam_c where rel_type_cd = 'A27';
+
+select * from fam_rel_c;
+
+select * from org_c;
+
+;
+select  -- 가져와라
+ * -- 모두
+ from emp_c;
+ 
+ select  -- 가져와라
+  emp.emp_no --컬럼선택
+ ,emp.gender_cd
+ from emp_c emp
+ ;
+ 
+  select  -- 가져와라
+  emp.emp_no as 직원번호 --컬럼선택
+ ,emp.gender_cd as 직원성별
+ from emp_c emp
+ ;
+ 
+   select  -- 가져와라
+  emp.emp_no as 직원번호 --컬럼선택
+ ,emp.gender_cd as 직원성별
+ from emp_c emp
+ where gender_cd = '1'
+ and birth_ymd > ='1950101'
+ ;
+ 
+select  -- 가져와라
+  emp.emp_no as 직원번호 --컬럼선택
+ ,emp.gender_cd as 직원성별
+ ,birth_ymd as 생년월일
+ from emp_c emp
+ where gender_cd = '1'
+ and birth_ymd > ='1950101'
+  order by birth_ymd asc
+  ;
+  
+select  -- 가져와라
+  emp.emp_no as 직원번호 --컬럼선택
+ ,emp.gender_cd as 직원성별
+ ,birth_ymd as 생년월일
+ from emp_c emp
+ where gender_cd = '1'
+ and birth_ymd > ='1950101'
+  order by emp_nm ,birth_ymd desc
+  ;
+  
+select  -- 가져와라
+  emp.emp_no as 직원번호 --컬럼선택
+ ,emp.gender_cd as 직원성별
+ ,birth_ymd as 생년월일
+ from emp_c emp
+ where gender_cd = '1'
+ and birth_ymd > ='1950101'
+  order by emp_nm asc ,birth_ymd desc
+  ;
+ 
+ select  -- 가져와라
+ gender_cd
+ ,count(*)
+ from emp_c emp
+ group by gender_cd
+  ;
+  
+ select  -- 가져와라
+ gender_cd
+ ,count(*) -- count, sum, avg, min, max
+ from emp_c emp
+ group by gender_cd
+  ;
+  
+ select  -- 가져와라
+ gender_cd
+ ,birth_ymd
+ ,count(*) -- count, sum, avg, min, max
+ from emp_c emp
+ group by gender_cd, birth_ymd
+ having count(*) >= 3
+  ;
+  
+ select  -- 가져와라
+ gender_cd
+ ,max(birth_ymd) -- count, sum, avg, min, max
+ from emp_c emp
+ group by gender_cd
+ ;
+ 
+select  -- 가져와라
+ gender_cd
+ ,min(birth_ymd) -- count, sum, avg, min, max
+ from emp_c emp
+ group by gender_cd
+ ;
+ 
+ select 
+  * from emp_c
+  where emp_nm  like '이%';
+  
+   select 
+  * from emp_c
+  where emp_nm  not like '이%';
+  
+ select 
+  * from emp_c
+  where emp_nm like '%이';
+  
+   select 
+  * from emp_c
+  where emp_nm like '%성%';
+  
+  select 
+  * 
+  from emp_c
+  where gender_cd = '1';
+  
+    select 
+  * 
+  from emp_c
+  where gender_cd <> '2';
+  
+      select 
+  * 
+  from emp_c
+  where birth_ymd >= '19550101';
+  
+  ;
+  
+  select 
+   *
+   from emp_c
+   where emp_no = '10005545';
+   
+  select 
+   *
+   from emp_c
+   where emp_no in ( '10005545', '10004141');
+   
+  select 
+   *
+   from emp_c
+   where emp_no not in ( '10005545', '10004141');
+   
+  select 
+   *
+   from emp_c
+   where emp_no in ( select emp_no from emp_c where emp_nm like '황%'); -- 서브쿼리
+;
+
+select
+ gender_cd,
+ birth_ymd,
+ decode (gender_cd, '1','남자','여자')
+ ,case when gender_cd = '1' and birth_ymd >= '19500101' then '젋은남자' 
+       when gender_cd = '1' and birth_ymd < '19500101' then '늙은남자' 
+       when gender_Cd = '2' then '여자'
+       else '' end
+ from emp_C;
+ 
+ select
+ rel_type_cd,
+ decode (rel_type_cd, 'A27','자녀','A18','아내','모름')
+ from fam_c;
+  
+select 
+emp_no
+,fam_nm
+,rank() over (partition by emp_no order by fam_nm asc)
+from fam_c;
+
+select 
+emp_no
+,fam_nm
+,rank() over (order by fam_nm asc)
+from fam_c;
+
+  
+select 
+fam_nm
+,dense_rank() over (order by fam_nm asc)
+from fam_c;
+
+-- 행과 행의 합
+
+SELECT * FROM EMP_C WHERE EMP_NO = '10005545'
+UNION ALL 
+SELECT * FROM EMP_C WHERE EMP_NO = '10005545'
+
+;
+
+SELECT * FROM EMP_C WHERE EMP_NO = '10005545'
+UNION -- 중복제거
+SELECT * FROM EMP_C WHERE EMP_NO = '10005545'
+;
+
+-- JOIN
+-- 테이블을 어떠한 기준으로 합친다.
+-- JOIN은 2개테이블이 관여한다.
+-- 1) 기준테이블을 설정
+-- 2) 대상테이블을 설정
+-- 3) 조인키로 엮어준다.
+
+-- 직원번호 / 직원성명 / 가족성명 / 가족생년월일
+SELECT
+ EMP.EMP_NO
+ ,EMP.EMP_NM
+ ,FAM.FAM_NM
+ ,FAM.BIRTH_YMD
+ FROM EMP_C EMP -- 기준
+ INNER JOIN FAM_C FAM --대상
+ ON EMP.EMP_NO = FAM.EMP_NO -- 조인키로 엮어준다.
+ WHERE EMP.EMP_NO IN ( '10001452' , '11505155')
+ ;
+ --EX) 자녀가 있는 임직원의 리스트
+ 
+SELECT
+ EMP.EMP_NO
+ ,EMP.EMP_NM
+ ,FAM.FAM_NM
+ ,FAM.BIRTH_YMD
+ FROM EMP_C EMP -- 기준
+ LEFT OUTER JOIN FAM_C FAM --대상
+ ON EMP.EMP_NO = FAM.EMP_NO -- 조인키로 엮어준다.
+  WHERE EMP.EMP_NO IN ( '10001452' , '11505155')
+  AND FAM.FAM_NM IS NOT NULL
+ ;
+ --EX) 임직원의 자녀 정보

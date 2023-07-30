@@ -1,0 +1,56 @@
+on뒤에 where절과 and절은 결과의 차이가 있기에 잘 선택해서 사용
+좋은 회사는 담당 업무가 자세히 나와있다.
+나쁜 회사는 채용 공고가 몇개월 단위로 올라와 있다.
+eternaly8318@naver.com
+
+select * from sales_h;
+
+/*
+
+1.일자별 / 직원별 / 실적수합계 / 금액합계 / 실적수*금액 합계 를 구하세요.
+
+일자별 / 직원별 / 누적 실적 합계를 구하세요.
+
+전체 일자에서 직원별 / 상위 실적수*금액 합계가 10위 까지 구하는 sql을 작성하세요.
+
+*/
+
+select 
+ sales_date
+ ,emp_no
+ ,sum(sales_qty) over (partition by sales_Date, emp_no order by seq_no) as 누적
+ from sales_h
+ ;
+ 
+-- 전체 일자에서 직원별 / 상위 실적수*금액 합계가 10위 까지 구하는 sql을 작성하세요.
+select * 
+    from 
+        (select 
+         emp.org_cd
+         ,sum(sales_qty * sale_price) as 실적금액합계
+         ,rank() over (order by sum(sales_qty * sale_price) desc) as rn
+         from sales_h sh
+         inner join emp_c emp
+         on sh.emp_no = emp.emp_no
+         group by emp.org_cd
+        ) std
+    where std.rn <= 10
+ ;
+
+--> 개인별 / 부서별
+
+-- 직원 , 일자별 누적 sql
+
+select 
+emp_no
+,sales_Date
+,sum(qty) over (partition by emp_no order by sales_Date) as 누적
+ from  (
+            select 
+             emp_no
+             ,sales_Date
+             ,sum(sales_qty) as qty
+            from sales_h
+            group by emp_no,sales_Date
+        );
+
